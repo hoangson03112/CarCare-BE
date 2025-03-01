@@ -1,6 +1,6 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const Booking = require("../models/Booking");
+
 const router = express.Router();
 
 const authMiddleware = (req, res, next) => {
