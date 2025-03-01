@@ -104,20 +104,31 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ error: "Email hoặc mật khẩu không đúng" });
     }
 
-    // Tạo JWT token
-    const token = jwt.sign(
-      { id: user._id, role: user.role, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" }
+    // Tạo Access Token
+    const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "24h",
+    });
+
+    // Tạo Refresh Token
+    const refreshToken = jwt.sign(
+      { id: user._id },
+      process.env.REFRESH_SECRET,
+      {
+        expiresIn: "7d",
+      }
     );
+
+    // Lưu refresh token vào database (nếu cần) hoặc gửi về client
+    user.refreshToken = refreshToken;
+    await user.save();
 
     // Trả về thông tin người dùng và token
     res.json({
-      token,
+      accessToken,
+      refreshToken,
       user: {
         id: user._id,
         fullName: user.fullName,
-        email: user.email,
         role: user.role,
       },
     });
