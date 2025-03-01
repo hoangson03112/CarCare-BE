@@ -6,7 +6,8 @@ const http = require("http"); // Thêm dòng này
 require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
-const bookingRoutes = require("./routes/bookings");
+const garageRouter = require("./routes/garageRoutes");
+const appointment = require("./routes/appointments");
 
 const app = express();
 const server = http.createServer(app); // Tạo server HTTP chung
@@ -60,7 +61,8 @@ mongoose
   .catch((err) => console.log(err));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/bookings", bookingRoutes);
+app.use("/api", garageRouter);
+app.use("/appointment", appointment);
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`)); // Sử dụng server.listen
