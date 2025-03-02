@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
-
+const route = require('./routes');
 const authRoutes = require("./routes/auth");
 const garageRouter = require("./routes/garageRoutes");
 const appointment = require("./routes/appointments");
@@ -11,7 +11,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-
+route(app);
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
