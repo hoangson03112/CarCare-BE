@@ -100,6 +100,8 @@ router.post("/login", async (req, res) => {
   try {
     // Tìm người dùng theo email
     const user = await User.findOne({ email });
+    console.log(user);
+    
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(400).json({ error: "Email hoặc mật khẩu không đúng" });
     }
