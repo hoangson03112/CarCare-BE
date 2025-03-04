@@ -32,86 +32,72 @@ router.post("/book", async (req, res) => {
   }
 });
 
-// 📌 Lấy danh sách lịch hẹn của User
-router.get("/user/:customerId", async (req, res) => {
+//gara
+router.put("/appointment/:id/status", async (req, res) => {
   try {
-    const { customerId } = req.params;
-    const appointments = await Appointment.find({
-      customer: customerId,
-    }).populate("garage", "name address");
-
-    res.status(200).json(appointments);
-  } catch (error) {
-    console.error("Lỗi khi lấy lịch hẹn của user:", error);
-    res.status(500).json({ error: "Lỗi server khi lấy lịch hẹn của user" });
-  }
-});
-
-// 📌 Lấy danh sách lịch hẹn của Gara
-router.get("/garage/:garageId", async (req, res) => {
-  try {
-    const { garageId } = req.params;
-    const appointments = await Appointment.find({ garage: garageId }).populate(
-      "customer",
-      "name phone"
-    );
-
-    res.status(200).json(appointments);
-  } catch (error) {
-    console.error("Lỗi khi lấy lịch hẹn của gara:", error);
-    res.status(500).json({ error: "Lỗi server khi lấy lịch hẹn của gara" });
-  }
-});
-
-// 📌 Cập nhật trạng thái lịch hẹn (VD: xác nhận, hoàn thành, hủy)
-router.patch("/:appointmentId/status", async (req, res) => {
-  try {
-    const { appointmentId } = req.params;
-    const { status } = req.body;
+    const { status, reason } = req.body;
+    const validStatuses = ["pending", "confirmed", "completed", "cancelled"];
 
     // Kiểm tra trạng thái hợp lệ
-    if (!["pending", "confirmed", "completed", "cancelled"].includes(status)) {
-      return res.status(400).json({ error: "Trạng thái không hợp lệ" });
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ error: "Trạng thái không hợp lệ!" });
     }
 
-    const updatedAppointment = await Appointment.findByIdAndUpdate(
-      appointmentId,
-      { status },
-      { new: true }
-    );
+    const appointment = await Appointment.findById(req.params.id);
 
-    if (!updatedAppointment) {
-      return res.status(404).json({ error: "Lịch hẹn không tồn tại" });
+    if (!appointment) {
+      return res.status(404).json({ error: "Không tìm thấy lịch hẹn" });
     }
 
-    res
-      .status(200)
-      .json({
-        message: "Cập nhật trạng thái thành công",
-        appointment: updatedAppointment,
-      });
+    // Nếu hủy lịch hẹn mà không có lý do -> báo lỗi
+    if (status === "cancelled" && !reason) {
+      return res.status(400).json({ error: "Phải có lý do khi hủy lịch hẹn!" });
+    }
+
+    appointment.status = status;
+    appointment.reason = status === "cancelled" ? reason : null;
+    await appointment.save();
+
+    res.json({
+      message: `Lịch hẹn đã được ${
+        status === "confirmed"
+          ? "xác nhận"
+          : status === "completed"
+          ? "hoàn thành"
+          : "hủy"
+      }`,
+      appointment,
+    });
   } catch (error) {
-    console.error("Lỗi khi cập nhật trạng thái:", error);
+    console.error("Lỗi cập nhật trạng thái lịch hẹn:", error);
     res.status(500).json({ error: "Lỗi server khi cập nhật trạng thái" });
   }
 });
 
-// 📌 Hủy lịch hẹn
-router.delete("/:appointmentId", async (req, res) => {
+// 📌 Lấy danh sách lịch hẹn
+router.get("/appointments", async (req, res) => {
   try {
-    const { appointmentId } = req.params;
-    const deletedAppointment = await Appointment.findByIdAndDelete(
-      appointmentId
-    );
+    const appointments = await Appointment.find();
+    res.json(appointments);
+  } catch (error) {
+    console.error("Lỗi lấy danh sách lịch hẹn:", error);
+    res.status(500).json({ error: "Lỗi server khi lấy danh sách lịch hẹn" });
+  }
+});
 
-    if (!deletedAppointment) {
-      return res.status(404).json({ error: "Lịch hẹn không tồn tại" });
+// 📌 Xóa lịch hẹn
+router.delete("/appointment/:id", async (req, res) => {
+  try {
+    const appointment = await Appointment.findByIdAndDelete(req.params.id);
+
+    if (!appointment) {
+      return res.status(404).json({ error: "Không tìm thấy lịch hẹn để xóa" });
     }
 
-    res.status(200).json({ message: "Đã hủy lịch hẹn" });
+    res.json({ message: "Xóa lịch hẹn thành công!" });
   } catch (error) {
-    console.error("Lỗi khi hủy lịch hẹn:", error);
-    res.status(500).json({ error: "Lỗi server khi hủy lịch hẹn" });
+    console.error("Lỗi khi xóa lịch hẹn:", error);
+    res.status(500).json({ error: "Lỗi server khi xóa lịch hẹn" });
   }
 });
 

@@ -24,6 +24,7 @@ const AppointmentSchema = new mongoose.Schema({
     enum: ["pending", "confirmed", "completed", "cancelled"],
     default: "pending",
   },
+  reason: { type: String, default: null }, // Thêm lý do hủy lịch hẹn
   createdAt: { type: Date, default: Date.now },
 });
 

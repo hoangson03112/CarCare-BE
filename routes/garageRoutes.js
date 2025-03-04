@@ -38,5 +38,40 @@ router.get("/:garageId", async (req, res) => {
     res.status(500).json({ error: "Lỗi server khi lấy thông tin gara" });
   }
 });
+// API thêm gara với kiểm tra dữ liệu
+router.post("/garages", async (req, res) => {
+  try {
+    const { name, address, phone, services, workingHours } = req.body;
+
+    if (
+      !name ||
+      !address ||
+      !phone ||
+      !services ||
+      !workingHours ||
+      !workingHours.open ||
+      !workingHours.close
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Vui lòng nhập đầy đủ thông tin gara" });
+    }
+
+    const newGarage = new Garage({
+      name,
+      address,
+      phone,
+      services,
+      workingHours,
+    });
+    await newGarage.save();
+    res
+      .status(201)
+      .json({ message: "Gara đã được thêm thành công", garage: newGarage });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Lỗi máy chủ" });
+  }
+});
 
 module.exports = router;
