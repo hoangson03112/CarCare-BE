@@ -4,7 +4,7 @@ const cors = require("cors");
 const socketIo = require("socket.io");
 const http = require("http"); // Thêm dòng này
 require("dotenv").config();
-const route = require('./routes');
+const route = require("./routes");
 const authRoutes = require("./routes/auth");
 const garageRouter = require("./routes/garageRoutes");
 const appointment = require("./routes/appointments");

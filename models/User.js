@@ -5,7 +5,11 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   phone: { type: String, required: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ["customer", "garage_owner"], required: true },
+  role: {
+    type: String,
+    enum: ["customer", "garage_owner", "admin"],
+    required: true,
+  },
   vehicles: [
     {
       licensePlate: String,
@@ -14,12 +18,7 @@ const UserSchema = new mongoose.Schema({
       year: Number,
     },
   ],
-  garage: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Garage",
-    default: null,
-  },
   createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model("User", UserSchema,"users");

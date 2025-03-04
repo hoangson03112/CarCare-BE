@@ -1,8 +1,9 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const serviceController = require('../controllers/serviceController');
+const serviceController = require("../controllers/serviceController");
 
-router.get('/byName/:name', serviceController.getServiceByName);
-router.get('/', serviceController.getAllServices);
+router.get("/:IDService", serviceController.getServiceByID);
+
+router.get("/", serviceController.getAllServices);
 
 module.exports = router;

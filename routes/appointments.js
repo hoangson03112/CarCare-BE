@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Appointment = require("../models/Appointment");
+const Booking = require("../models/Booking");
 
 // 📌 Đặt lịch hẹn mới
 router.post("/book", async (req, res) => {
@@ -13,7 +13,7 @@ router.post("/book", async (req, res) => {
     }
 
     // Tạo lịch hẹn mới
-    const newAppointment = new Appointment({
+    const newAppointment = new Booking({
       customer,
       garage,
       vehicle,
@@ -35,7 +35,7 @@ router.post("/book", async (req, res) => {
 router.get("/user/:customerId", async (req, res) => {
   try {
     const { customerId } = req.params;
-    const appointments = await Appointment.find({
+    const appointments = await Booking.find({
       customer: customerId,
     }).populate("garage", "name address");
 
@@ -50,7 +50,7 @@ router.get("/user/:customerId", async (req, res) => {
 router.get("/garage/:garageId", async (req, res) => {
   try {
     const { garageId } = req.params;
-    const appointments = await Appointment.find({ garage: garageId }).populate(
+    const appointments = await Booking.find({ garage: garageId }).populate(
       "customer",
       "name phone"
     );
@@ -73,7 +73,7 @@ router.patch("/:appointmentId/status", async (req, res) => {
       return res.status(400).json({ error: "Trạng thái không hợp lệ" });
     }
 
-    const updatedAppointment = await Appointment.findByIdAndUpdate(
+    const updatedAppointment = await Booking.findByIdAndUpdate(
       appointmentId,
       { status },
       { new: true }
@@ -97,9 +97,7 @@ router.patch("/:appointmentId/status", async (req, res) => {
 router.delete("/:appointmentId", async (req, res) => {
   try {
     const { appointmentId } = req.params;
-    const deletedAppointment = await Appointment.findByIdAndDelete(
-      appointmentId
-    );
+    const deletedAppointment = await Booking.findByIdAndDelete(appointmentId);
 
     if (!deletedAppointment) {
       return res.status(404).json({ error: "Lịch hẹn không tồn tại" });

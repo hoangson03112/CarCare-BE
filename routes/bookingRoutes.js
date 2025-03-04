@@ -1,9 +1,16 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const bookingController = require('../controllers/bookingController');
+const bookingController = require("../controllers/bookingController");
+const authMiddleware = require("../middleware/auth");
 
-router.get('/', bookingController.getAllBookings);
-router.post('/', bookingController.createBooking);
-router.put('/:id', bookingController.updateBooking);
+router.get("/", bookingController.getAllBookings);
+router.post("/", authMiddleware, bookingController.createBooking);
+router.get(
+  "/BookingsByGarage",
+  authMiddleware,
+  bookingController.getBookingsByGarage
+);
+
+router.patch("/:id", bookingController.updateBooking);
 
 module.exports = router;

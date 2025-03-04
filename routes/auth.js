@@ -101,14 +101,14 @@ router.post("/login", async (req, res) => {
     // Tìm người dùng theo email
     const user = await User.findOne({ email });
     console.log(user);
-    
+
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(400).json({ error: "Email hoặc mật khẩu không đúng" });
     }
 
     // Tạo Access Token
     const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "24h",
+      expiresIn: "4h",
     });
 
     // Tạo Refresh Token

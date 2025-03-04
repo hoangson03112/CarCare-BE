@@ -1,19 +1,46 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const BookingSchema = new Schema({
-    customerId: { type: Schema.Types.ObjectId, ref: 'Customer', required: true },
-    customerName: { type: String, required: true },
-    customerPhone: { type: String, required: true },
-    customerEmail: { type: String, required: true },
-    service: { type: [String], required: true },
-    bookingDate: {
-        date: { type: String, required: true },
-        timeSlot: { type: String, required: true }
+const BookingSchema = new Schema(
+  {
+    customerId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-    status: { type: String, enum: ['Confirmed', 'Pending', 'Cancelled'], default: 'Pending' },
-    garageId: { type: Schema.Types.ObjectId, ref: 'Garage', required: true },
-    cancelReason: { type: String },
-}, { timestamps: true });
+    services: [
+      {
+        serviceId: {
+          type: Schema.Types.ObjectId,
+          ref: "Service",
+          required: true,
+        },
+      },
+    ],
+    bookingDate: {
+      type: String,
+    },
+    bookingTime: {
+      type: String,
+    },
+    status: {
+      type: String,
+      enum: ["Confirmed", "Pending", "Cancelled"],
+      default: "Pending",
+    },
+    garageId: {
+      type: Schema.Types.ObjectId,
+      ref: "Garage",
+      required: true,
+    },
+    cancelReason: {
+      type: String,
+    },
+    totalPrice: {
+      type: Number,
+    },
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('Booking', BookingSchema);
+module.exports = mongoose.model("Booking", BookingSchema, "bookings");

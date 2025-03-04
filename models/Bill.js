@@ -11,7 +11,7 @@ const BillSchema = new Schema({
         serviceId: { type: Schema.Types.ObjectId, ref: 'Service', required: true },
         name: { type: String, required: true },
         price: { type: Number, required: true },
-        quantity: { type: Number, required: true, default: 1 }
+       
     }],
     totalAmount: { type: Number, required: true },
     paymentStatus: { type: String, enum: ['Paid', 'Unpaid'], default: 'Unpaid' },
